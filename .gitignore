@@ -1,0 +1,8 @@
+/_minted-main
+*.aux
+*.log
+*.fdb_latexmk
+*.fls
+*.toc
+*.synctex.gz
+.DS_Store
