@@ -1,0 +1,95 @@
+\section{11.10.2024 лекция 6}
+фото до 10:58
+\subsection{К}
+Имя первоц структуры dst, второй "--- dst+4, третьей "--- dst+8 и т.д.
+
+Работать с полями структуры можно также, как с полями переменной комбинированного типа в языках высокого уровня:
+\begin{center}
+    <имя переменной> . <имя поля>
+\end{center}
+Например, dt1.y, dt2.m, dt3.d 
+
+Ассемблер (дальше по фото 10:57)
+
+Точка, указанная при обращении к полю, это оператор Ассемблера, который вычисляет адрес по формуле:
+\begin{center}
+    <адресное выражение> + <смещение поля в структуре>
+\end{center}
+Тип полученного адреса совпадает с типом поля, т.е.
+\begin{center}
+    type(dt1.m) = type m = byte
+\end{center}
+адресное выражение может быть любой сложности, например:
+\begin{enumerate}
+    \item mov AX, (dts+8).y
+    \item mov SI,
+    inc (dts[SI]).m ; Аисп = (dts + (SI)).m = (dts + 8).m
+    \item lea BX, dt1
+    mov[BX].d, 10   ; Аисп = (BX) + d = dt1.d
+\end{enumerate}
+
+Замечания:
+\begin{enumerate}
+    \item  1
+    \item 
+\end{enumerate}
+
+Одно исключение: если поле описано как строка, то оно можеит иметь начальным значением строу той же длины или меньшей, в последнем случае строка дополняется справа пробелами.
+Например:
+\begin{minted}{asm}
+    student struc
+            f DB 10DUP(?)   ;
+            i DB
+\end{minted}
+Примеры программ с использванием данных типа структура.
+\begin{minted}{asm}
+    ; prim.asm - прямое обращение к полям структуры
+        .model tiny
+        .code
+        org 100h    ;
+    Start: mov AH, 9
+        mov DX, offset message
+        int 21h
+
+        lea DX, st1.s 
+        int 21h
+        lea DX, st1.f
+        int 21h
+        lea DX, st1.i 
+            int 21h
+            ret
+        message DB "hello", 0dh, 0ah, "$"
+
+        tst struc   ;
+                    s DB "student", "$"
+                    f DB "Ivanov", "$"
+                    i DB "Ivan", "$"
+                tst ends
+                st1 tst < > ;описание переменной типа tst
+            end start
+
+\end{minted}
+
+\begin{minted}{asm}
+                ; prim.asm - обращение к полям структуры в цикле
+    Start: mov AH, 9
+            mov DX, offset message
+            int 21h
+        mov SI, 0
+        mov CX, 3
+    m1: lea DX, st1[SI]
+        int 21h
+        add SI, 9
+        loop m1
+        ret
+    message DB "hello", 0dh, 0ah, "$"
+        tst struc   ;описание типа структуры
+                    s DB "student", "$"
+                    f DB "Ivanov", "$"
+                    i DB "Ivan", "$"
+                tst ends
+                    st1 tst < > 
+                        end start
+
+
+\end{minted}
